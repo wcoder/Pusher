@@ -16,7 +16,7 @@ public class AppDelegate : UIApplicationDelegate
         {
             BackgroundColor = UIColor.SystemBackground,
             TextAlignment = UITextAlignment.Center,
-            Text = $"Hello, Mac Catalyst! {Class1.Test}",
+            Text = $"Hello, Mac Catalyst!",
             AutoresizingMask = UIViewAutoresizing.All
         });
         Window.RootViewController = vc;
