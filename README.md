@@ -1,5 +1,9 @@
 # pusher-p8
 
+## Clients
+- CLI (TODO)
+- macOS (TODO)
+
 ## Features
 
 - APNs
