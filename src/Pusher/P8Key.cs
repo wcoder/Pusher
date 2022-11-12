@@ -20,14 +20,14 @@ public class P8Key
             .Replace("-----END PRIVATE KEY-----", "")
             .Replace("\n", "");
         byte[] privateKeyBytes = Convert.FromBase64String(rawKeyFileData);
- 
+
         // https://stackoverflow.com/a/58861868/5925490
         using ECDsa key = ECDsa.Create();
         key.ImportPkcs8PrivateKey(privateKeyBytes, out _);
-            
+
         string jwtHeader = $"{{\"alg\":\"ES256\",\"kid\":\"{keyId}\"}}";
         string jwtPayload = $"{{\"iss\":\"{teamId}\",\"iat\":{DateTimeOffset.Now.ToUnixTimeSeconds().ToString()}}}";
-        
+
         string headerBase64 = ToBase64Encode(jwtHeader);
         string payloadBase64 = ToBase64Encode(jwtPayload);
         string unsignedJwtData = string

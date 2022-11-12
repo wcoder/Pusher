@@ -19,6 +19,8 @@ public class Notification
     private string? _apnsPriority;
     private string? _apnsPushType;
     private string? _apnsExpiration;
+    private string? _apnsCollapseId;
+    private string? _apnsId;
 
     private Notification(string authToken)
     {
@@ -46,14 +48,14 @@ public class Notification
         _deviceToken = deviceToken;
         return this;
     }
-    
+
     public Notification WithTopic(string bundleId)
     {
         _apnsTopic = bundleId;
         return this;
     }
 
-    
+
     public Notification WithPriority(Priority priority)
     {
         _apnsPriority = priority.ToString();
@@ -83,10 +85,22 @@ public class Notification
         return this;
     }
 
+    public Notification WithCollapseId(string id)
+    {
+        _apnsCollapseId = id;
+        return this;
+    }
+
+    public Notification WithId(string id)
+    {
+        _apnsId = id;
+        return this;
+    }
+
     public async Task<string> Send() // TODO: Export
     {
         var url = $"{_apiBaseUrl}/{_deviceToken}";
-        
+
         using var client = new HttpClient();
         using var request = new HttpRequestMessage(HttpMethod.Post, url)
         {
@@ -112,12 +126,20 @@ public class Notification
         {
             request.Headers.Add("apns-expiration", _apnsExpiration);
         }
+        if (!string.IsNullOrEmpty(_apnsCollapseId))
+        {
+            request.Headers.Add("apns-collapse-id", _apnsCollapseId);
+        }
+        if (!string.IsNullOrEmpty(_apnsId))
+        {
+            request.Headers.Add("apns-id", _apnsId);
+        }
         Debug.WriteLine(request);
         Debug.WriteLine($"Payload: {_payload}");
 
         var response = await client.SendAsync(request);
         Debug.WriteLine(response);
-        
+
         // response.EnsureSuccessStatusCode();
 
         var data = await response.Content.ReadAsStringAsync();
