@@ -11,7 +11,7 @@ internal class P8Command : APNsCommandBase
         var keyArgument = new Argument<string>("teamId:keyId:keyPath", ".p8 key info");
         keyArgument.AddValidator(result =>
         {
-            var value = result.GetValueForArgument<string>(keyArgument);
+            var value = result.GetValueForArgument(keyArgument);
             if (string.IsNullOrEmpty(value))
             {
                 result.ErrorMessage = "p8: Info is required";

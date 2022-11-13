@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Http.Headers;
@@ -43,45 +42,84 @@ public class Notification
         return this;
     }
 
+    /// <summary>
+    /// </summary>
+    /// <param name="deviceToken">
+    /// The device push token it's the hexadecimal bytes that identify the user’s device.
+    /// Your app receives the bytes for this device token when registering for remote notifications.
+    /// </param>
+    /// <returns></returns>
     public Notification WithDeviceToken(string deviceToken)
     {
         _deviceToken = deviceToken;
         return this;
     }
-
+    
+    /// <summary>
+    /// </summary>
+    /// <param name="bundleId">
+    /// The topic for the notification. In general, the topic is your app’s bundle ID/app ID.
+    /// It can have a suffix based on the type of push notification.
+    /// </param>
+    /// <returns></returns>
     public Notification WithTopic(string bundleId)
     {
         _apnsTopic = bundleId;
         return this;
     }
 
-
+    /// <summary>
+    /// </summary>
+    /// <param name="priority">
+    /// The priority of the notification. If you omit this, APNs sets the notification priority to 10.
+    /// </param>
+    /// <returns></returns>
     public Notification WithPriority(Priority priority)
     {
         _apnsPriority = priority.ToString();
         return this;
     }
 
+    /// <summary>
+    /// </summary>
+    /// <param name="expirationDate">
+    /// The date at which the notification is no longer valid. This value is a UNIX epoch expressed in seconds (UTC).
+    /// If the value is nonzero, APNs stores the notification and tries to deliver it at least once,
+    /// repeating the attempt as needed until the specified date.
+    /// If the value is 0, APNs attempts to deliver the notification only once and doesn't store it.
+    /// </param>
+    /// <returns></returns>
     public Notification WithExpiration(DateTime expirationDate) // TODO: check
     {
         _apnsExpiration = new DateTimeOffset(expirationDate).ToUnixTimeSeconds().ToString();
         return this;
     }
 
+    /// <summary>
+    /// </summary>
+    /// <param name="payload">
+    /// JSON payload with the notification’s content into the body of your request.
+    /// The JSON payload must not be compressed and is limited to a maximum size of 4 KB (4096 bytes).
+    /// For a Voice over Internet Protocol (VoIP) notification, the maximum size is 5 KB (5120 bytes).
+    /// </param>
+    /// <returns></returns>
     public Notification WithPayload(Payload payload)
     {
         _payload = payload.Data;
         return this;
     }
 
+    /// <summary>
+    /// </summary>
+    /// <param name="type">
+    /// Must accurately reflect the contents of your notification’s payload. If there’s a mismatch,
+    /// or if the header is missing on required systems, APNs may return an error,
+    /// delay the delivery of the notification, or drop it altogether.
+    /// </param>
+    /// <returns></returns>
     public Notification WithType(PushType type)
     {
-        _apnsPushType = type switch
-        {
-            PushType.Alert => "alert",
-            PushType.Background => "background",
-            _ => throw new InvalidEnumArgumentException("undefined type")
-        };
+        _apnsPushType = type.ToString().ToLower();
         return this;
     }
 
@@ -99,6 +137,8 @@ public class Notification
 
     public async Task<string> Send() // TODO: Export
     {
+        ArgumentException.ThrowIfNullOrEmpty(_payload, "Payload can't be empty");
+
         var url = $"{_apiBaseUrl}/{_deviceToken}";
 
         using var client = new HttpClient();

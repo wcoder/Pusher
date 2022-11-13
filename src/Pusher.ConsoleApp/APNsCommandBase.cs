@@ -48,7 +48,7 @@ internal abstract class APNsCommandBase : Command
         Add(PushTypeOption);
 
         ProductionOption = new Option<bool>(
-            new string[] {"--production", "-prod"},
+            new[] {"--production", "-prod"},
             "Use production APNs API or Sandbox");
         ProductionOption.SetDefaultValue(false);
         Add(ProductionOption);

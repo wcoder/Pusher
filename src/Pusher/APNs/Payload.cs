@@ -2,14 +2,12 @@ namespace Pusher.APNs;
 
 public class Payload
 {
-    private readonly string _data;
-
-    internal string Data => _data;
-
     private Payload(string data)
     {
-        _data = data;
+        Data = data;
     }
+
+    internal string Data { get; }
 
     public static Payload FromRawJson(string json)
     {
