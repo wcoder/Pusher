@@ -1,38 +1,11 @@
-﻿using Pusher;
-using Pusher.APNs;
+﻿using System.CommandLine;
+using Pusher.ConsoleApp;
 
-var keyPath = "";
-var teamId = "";
-var keyId = "";
-
-var bundleId = "";
-var deviceId = "";
-var payload = $$"""
+var rootCommand = new RootCommand("Pusher CLI description.")
 {
-    "aps" : {
-        "alert" : {
-            "title" : "Push On Simulator",
-            "body" : "You have sent it on simulator"
-        },
-        "badge" : 1
-    }
-}
-""";
+    new APNsCommand(),
+};
 
-var result = await Notification
-    .WithP8Key(await P8Key.FromFile(keyPath, teamId, keyId))
-    .WithEnvironment(Env.Development)
-    .WithTopic(bundleId)
-    .WithDeviceToken(deviceId)
-    .WithPriority(Priority.Immediately)
-    .WithPayload(Payload.FromRawJson(payload))
-    .WithExpiration(DateTime.UtcNow.AddSeconds(10))
-    .WithType(PushType.Alert)
-    .Send();
+await rootCommand.InvokeAsync(args);
 
-Console.WriteLine(result);
-
-
-Console.WriteLine("Done");
-Console.ReadKey();
-
+return 0;
